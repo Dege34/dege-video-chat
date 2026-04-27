@@ -76,11 +76,7 @@ async function startChat() {
 
     try {
         localStream = await navigator.mediaDevices.getUserMedia({
-            video: { 
-                width: { ideal: 1280, max: 1920 },
-                height: { ideal: 720, max: 1080 },
-                facingMode: 'user' 
-            },
+            video: true,
             audio: true
         });
         const videoEl = document.getElementById('localVideo');
