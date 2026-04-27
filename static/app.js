@@ -80,8 +80,14 @@ async function startChat() {
             audio: true
         });
         const videoEl = document.getElementById('localVideo');
-        videoEl.srcObject = localStream;
-        videoEl.onloadedmetadata = () => videoEl.play().catch(e => console.error("Auto-play failed:", e));
+        if (videoEl) {
+            videoEl.srcObject = localStream;
+            videoEl.onloadedmetadata = () => {
+                videoEl.play().catch(err => console.error("Video play failed:", err));
+            };
+            // Ekstra garanti:
+            setTimeout(() => { if(videoEl.paused) videoEl.play().catch(() => {}); }, 1000);
+        }
     } catch (err) {
         console.error('Camera/microphone access error:', err);
         showToast('Camera access denied! Please allow and use HTTPS.');
