@@ -599,6 +599,7 @@ input[type="text"]:focus {
     gap: 8px;
     padding: 12px;
     border-top: 1px solid var(--border);
+    background: var(--bg-secondary);
 }
 
 .chat-input-area input {
@@ -790,18 +791,24 @@ input[type="text"]:focus {
         position: fixed;
         right: 0;
         top: 0;
-        bottom: 0;
+        bottom: 70px; /* Space for control bar */
         width: 100%;
-        max-width: 340px;
-        z-index: 20;
-        background: rgba(10, 10, 26, 0.95);
+        max-width: 100%;
+        z-index: 25;
+        background: #0a0a1a;
+        border-left: none;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-messages {
+        padding-bottom: 20px;
     }
 
     .chat-panel.hidden {
-        transform: translateX(100%);
-        width: 100%;
-        max-width: 340px;
-        opacity: 1;
+        transform: translateY(100%);
+        opacity: 0;
+        pointer-events: none;
     }
 
     .btn-icon-label {
