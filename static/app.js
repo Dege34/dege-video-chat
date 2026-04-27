@@ -70,15 +70,25 @@ async function startChat() {
     document.getElementById('localName').textContent = username + ' (You)';
     document.getElementById('localAvatar').textContent = username[0];
 
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+        showToast('HTTPS is required for camera access! 🔒');
+    }
+
     try {
         localStream = await navigator.mediaDevices.getUserMedia({
-            video: { width: 1280, height: 720, facingMode: 'user' },
+            video: { 
+                width: { ideal: 1280, max: 1920 },
+                height: { ideal: 720, max: 1080 },
+                facingMode: 'user' 
+            },
             audio: true
         });
-        document.getElementById('localVideo').srcObject = localStream;
+        const videoEl = document.getElementById('localVideo');
+        videoEl.srcObject = localStream;
+        videoEl.onloadedmetadata = () => videoEl.play().catch(e => console.error("Auto-play failed:", e));
     } catch (err) {
         console.error('Camera/microphone access error:', err);
-        showToast('Camera or microphone access denied!');
+        showToast('Camera access denied! Please allow and use HTTPS.');
         // Continue without camera
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -521,7 +531,10 @@ function addSystemMessage(text) {
 
 // --- Utilities ---
 function copyRoomLink() {
-    const link = `${window.location.origin}/room/${roomId}`;
+    const url = new URL(window.location.href);
+    url.searchParams.set('room', roomId);
+    url.searchParams.delete('user'); // Don't invite them with our username
+    const link = url.toString();
     navigator.clipboard.writeText(link).then(() => {
         showToast('Invite link copied! 📋');
         const btn = document.getElementById('copyLinkBtn');
