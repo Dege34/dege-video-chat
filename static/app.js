@@ -23,8 +23,8 @@ const ICE_SERVERS = [
 
 // --- Init ---
 window.addEventListener('DOMContentLoaded', () => {
-    roomId = window.location.pathname.split('/room/')[1];
     const params = new URLSearchParams(window.location.search);
+    roomId = params.get('room');
     username = params.get('user');
 
     document.getElementById('roomIdBadge').textContent = roomId;

@@ -7,7 +7,7 @@
     <meta name="description" content="Dege - Fast, secure, easy video chat">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="landing-page">
     <style>
@@ -137,7 +137,7 @@
             const res = await fetch(`${BACKEND}/create-room`, { method: 'POST' });
             const data = await res.json();
 
-            window.location.href = `${BACKEND}/room/${data.room_id}?user=${encodeURIComponent(username)}`;
+            window.location.href = `room.html?room=${data.room_id}&user=${encodeURIComponent(username)}`;
         }
 
         function joinRoom() {
@@ -155,7 +155,7 @@
                 return;
             }
 
-            window.location.href = `/room/${code}?user=${encodeURIComponent(username)}`;
+            window.location.href = `room.html?room=${code}&user=${encodeURIComponent(username)}`;
         }
     </script>
 </body>
