@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dege Video Chat</title>
+    <meta name="description" content="Dege - Fast, secure, easy video chat">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="landing-page">
+    <style>
+      .back-btn {
+        position: fixed;
+        bottom: 24px;
+        right: 20px;
+        z-index: 99999;
+        background: linear-gradient(135deg, #eab308, #f59e0b);
+        color: #000;
+        padding: 11px 22px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 20px rgba(234,179,8,0.5);
+        font-size: 14px;
+        transition: all 0.2s;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        animation: btnPulse 2.5s ease-in-out infinite;
+        letter-spacing: -0.01em;
+      }
+      .back-btn:hover {
+        transform: scale(1.06);
+        box-shadow: 0 6px 28px rgba(234,179,8,0.7);
+        animation: none;
+      }
+      @keyframes btnPulse {
+        0%, 100% { box-shadow: 0 4px 20px rgba(234,179,8,0.5), 0 0 0 0 rgba(234,179,8,0.3); }
+        50% { box-shadow: 0 4px 20px rgba(234,179,8,0.5), 0 0 0 8px rgba(234,179,8,0); }
+      }
+    </style>
+    <a href="https://thedege.com" class="back-btn">
+      &larr; thedege.com
+    </a>
+    <!-- DEMO Watermark -->
+    <div style="position:fixed;inset:0;z-index:2147483647;pointer-events:none;overflow:hidden;">
+      <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' style='position:absolute;inset:0;'>
+        <defs>
+          <pattern id='wm' x='0' y='0' width='340' height='220' patternUnits='userSpaceOnUse' patternTransform='rotate(-35)'>
+            <text x='10' y='70' font-family='system-ui,sans-serif' font-size='64' font-weight='900' fill='rgba(255,255,255,0.13)' letter-spacing='6'>DEMO</text>
+            <text x='10' y='105' font-family='system-ui,sans-serif' font-size='11' font-weight='700' fill='rgba(255,255,255,0.1)' letter-spacing='3'>BACKEND &amp; AI NOT RUNNING</text>
+          </pattern>
+        </defs>
+        <rect width='100%' height='100%' fill='url(#wm)'/>
+      </svg>
+    </div>
+    <!-- Animated background -->
+    <div class="bg-animation">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
+    </div>
+
+    <div class="landing-container">
+        <!-- Logo / Brand -->
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <rect width="48" height="48" rx="14" fill="url(#grad1)"/>
+                    <path d="M14 18C14 16.8954 14.8954 16 16 16H22C23.1046 16 24 16.8954 24 18V30C24 31.1046 23.1046 32 22 32H16C14.8954 32 14 31.1046 14 30V18Z" fill="white" fill-opacity="0.9"/>
+                    <path d="M26 21L33 17V31L26 27V21Z" fill="white" fill-opacity="0.9"/>
+                    <defs>
+                        <linearGradient id="grad1" x1="0" y1="0" x2="48" y2="48">
+                            <stop stop-color="#667eea"/>
+                            <stop offset="1" stop-color="#764ba2"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1 class="brand-name">Dege</h1>
+            <p class="brand-tagline">Fast, secure, and easy video chat</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="glass-card landing-card">
+            <h2 class="card-title">Start a Meeting</h2>
+            <p class="card-subtitle">Enter your name and create a new room</p>
+
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your name..." maxlength="20" autocomplete="off">
+            </div>
+
+            <button id="createRoomBtn" class="btn btn-primary" onclick="createRoom()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 10l5 5-5 5"/>
+                    <path d="M4 4v7a4 4 0 004 4h12"/>
+                </svg>
+                Create Room
+            </button>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <div class="input-group">
+                <label for="roomCode">Room Code</label>
+                <input type="text" id="roomCode" placeholder="Enter room code..." maxlength="8" autocomplete="off">
+            </div>
+
+            <button class="btn btn-secondary" onclick="joinRoom()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 010 7.75"/>
+                </svg>
+                Join Room
+            </button>
+        </div>
+
+        <p class="footer-text">Dege Video Chat &copy; 2026</p>
+    </div>
+
+    <script>
+        const usernameInput = document.getElementById('username');
+        const roomCodeInput = document.getElementById('roomCode');
+
+        usernameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') createRoom();
+        });
+        roomCodeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') joinRoom();
+        });
+
+        async function createRoom() {
+            const username = usernameInput.value.trim();
+            if (!username) {
+                usernameInput.classList.add('shake');
+                setTimeout(() => usernameInput.classList.remove('shake'), 500);
+                return;
+            }
+
+            const res = await fetch('/create-room', { method: 'POST' });
+            const data = await res.json();
+
+            window.location.href = `/room/${data.room_id}?user=${encodeURIComponent(username)}`;
+        }
+
+        function joinRoom() {
+            const username = usernameInput.value.trim();
+            const code = roomCodeInput.value.trim();
+
+            if (!username) {
+                usernameInput.classList.add('shake');
+                setTimeout(() => usernameInput.classList.remove('shake'), 500);
+                return;
+            }
+            if (!code) {
+                roomCodeInput.classList.add('shake');
+                setTimeout(() => roomCodeInput.classList.remove('shake'), 500);
+                return;
+            }
+
+            window.location.href = `/room/${code}?user=${encodeURIComponent(username)}`;
+        }
+    </script>
+</body>
+</html>
