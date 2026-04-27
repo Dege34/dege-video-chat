@@ -66,41 +66,74 @@ function joinWithName() {
     startChat();
 }
 
-async function startChat() {
+async function startChat(retryCount = 0) {
     document.getElementById('localName').textContent = username + ' (You)';
-    document.getElementById('localAvatar').textContent = username[0];
+    const avatarEl = document.getElementById('localAvatar');
+    if (avatarEl) avatarEl.textContent = username[0];
 
     if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
         showToast('HTTPS is required for camera access! 🔒');
     }
 
     try {
+        // En temel kamera isteği
         localStream = await navigator.mediaDevices.getUserMedia({
             video: true,
             audio: true
         });
+        
         const videoEl = document.getElementById('localVideo');
         if (videoEl) {
             videoEl.srcObject = localStream;
-            videoEl.onloadedmetadata = () => {
-                videoEl.play().catch(err => console.error("Video play failed:", err));
-            };
-            // Ekstra garanti:
-            setTimeout(() => { if(videoEl.paused) videoEl.play().catch(() => {}); }, 1000);
+            document.getElementById('localNoCam').style.display = 'none';
+            videoEl.style.display = 'block';
+            
+            // Videonun başladığından emin ol
+            await videoEl.play().catch(() => {
+                // Autoplay engellendiyse bir etkileşimle başlatılabilir
+                console.log("Autoplay blocked, waiting for interaction");
+            });
         }
+        
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            // Bağlantı zaten varsa tracks güncelle (re-negotiate)
+            updateAllPeerTracks();
+        } else {
+            connectWebSocket();
+        }
+
     } catch (err) {
-        console.error('Camera/microphone access error:', err);
-        showToast('Camera access denied! Please allow and use HTTPS.');
-        // Continue without camera
+        console.error('Camera Access Error:', err);
+        
+        if (retryCount < 2) {
+            console.log(`Retrying camera access... (${retryCount + 1})`);
+            setTimeout(() => startChat(retryCount + 1), 2000);
+            return;
+        }
+
+        showToast('Camera not found or access denied!');
+        document.getElementById('localNoCam').style.display = 'flex';
+        document.getElementById('localVideo').style.display = 'none';
+        
+        // Ses ile devam etmeyi dene
         try {
             localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (e) {
             localStream = new MediaStream();
         }
-        document.getElementById('localNoCam').style.display = 'flex';
+        
+        if (!ws) connectWebSocket();
     }
+}
 
-    connectWebSocket();
+function updateAllPeerTracks() {
+    Object.values(peers).forEach(pc => {
+        localStream.getTracks().forEach(track => {
+            const sender = pc.getSenders().find(s => s.track && s.track.kind === track.kind);
+            if (sender) sender.replaceTrack(track);
+            else pc.addTrack(track, localStream);
+        });
+    });
 }
 
 // --- WebSocket ---
