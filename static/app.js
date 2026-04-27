@@ -169,9 +169,14 @@ async function handleSignal(data) {
 
 // --- WebRTC ---
 function createPeerConnection(peerUsername) {
-    const pc = new RTCPeerConnection({ iceServers: ICE_SERVERS });
+    if (peers[peerUsername]) return peers[peerUsername];
+    
+    const pc = new RTCPeerConnection({ 
+        iceServers: ICE_SERVERS,
+        iceCandidatePoolSize: 10
+    });
 
-    // Add local tracks
+    // Add local tracks BEFORE creating offer
     if (localStream) {
         localStream.getTracks().forEach(track => {
             pc.addTrack(track, localStream);
@@ -227,6 +232,15 @@ async function handleOffer(data) {
     const pc = createPeerConnection(data.from);
     try {
         await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+        
+        // Process pending candidates
+        if (pc._pendingCandidates) {
+            for (const cand of pc._pendingCandidates) {
+                await pc.addIceCandidate(new RTCIceCandidate(cand)).catch(e => {});
+            }
+            pc._pendingCandidates = [];
+        }
+
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
 
@@ -245,8 +259,15 @@ async function handleAnswer(data) {
     if (pc) {
         try {
             await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+            
+            if (pc._pendingCandidates) {
+                for (const cand of pc._pendingCandidates) {
+                    await pc.addIceCandidate(new RTCIceCandidate(cand)).catch(e => {});
+                }
+                pc._pendingCandidates = [];
+            }
         } catch (err) {
-            console.error('Error setting answer:', err);
+            console.error('Error handling answer:', err);
         }
     }
 }
@@ -255,7 +276,14 @@ async function handleIceCandidate(data) {
     const pc = peers[data.from];
     if (pc) {
         try {
-            await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+            // Wait for remote description before adding candidates
+            if (pc.remoteDescription) {
+                await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+            } else {
+                // Queue candidate if remote description not yet set
+                if (!pc._pendingCandidates) pc._pendingCandidates = [];
+                pc._pendingCandidates.push(data.candidate);
+            }
         } catch (err) {
             console.error('ICE candidate error:', err);
         }

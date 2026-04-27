@@ -808,6 +808,24 @@ input[type="text"]:focus {
         display: none;
     }
 
+    .control-bar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        background: rgba(10, 10, 26, 0.9);
+        z-index: 30;
+    }
+
+    .room-main {
+        padding-bottom: 80px; /* Space for fixed control bar */
+    }
+
+    .video-area {
+        padding: 8px;
+    }
+
     .video-grid.grid-2 {
         grid-template-columns: 1fr;
     }
