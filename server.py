@@ -35,10 +35,21 @@ async def room(room_id: str):
     return FileResponse(os.path.join(STATIC_DIR, "room.html"))
 
 
+@app.get("/create-room", include_in_schema=False)
 @app.post("/create-room")
 async def create_room():
     room_id = uuid.uuid4().hex[:8]
     return {"room_id": room_id}
+
+
+@app.get("/style.css")
+async def get_style():
+    return FileResponse(os.path.join(STATIC_DIR, "style.css"))
+
+
+@app.get("/app.js")
+async def get_js():
+    return FileResponse(os.path.join(STATIC_DIR, "app.js"))
 
 
 @app.websocket("/ws/{room_id}/{username}")
@@ -124,7 +135,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str, username: str):
                 del rooms[room_id]
 
 
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/", StaticFiles(directory=STATIC_DIR), name="static")
 
 if __name__ == "__main__":
     import uvicorn
