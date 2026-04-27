@@ -46,18 +46,6 @@
     <a href="https://thedege.com" class="back-btn">
       &larr; thedege.com
     </a>
-    <!-- DEMO Watermark -->
-    <div style="position:fixed;inset:0;z-index:2147483647;pointer-events:none;overflow:hidden;">
-      <svg xmlns='http://www.w3.org/2000/svg' width='100%' height='100%' style='position:absolute;inset:0;'>
-        <defs>
-          <pattern id='wm' x='0' y='0' width='340' height='220' patternUnits='userSpaceOnUse' patternTransform='rotate(-35)'>
-            <text x='10' y='70' font-family='system-ui,sans-serif' font-size='64' font-weight='900' fill='rgba(255,255,255,0.13)' letter-spacing='6'>DEMO</text>
-            <text x='10' y='105' font-family='system-ui,sans-serif' font-size='11' font-weight='700' fill='rgba(255,255,255,0.1)' letter-spacing='3'>BACKEND &amp; AI NOT RUNNING</text>
-          </pattern>
-        </defs>
-        <rect width='100%' height='100%' fill='url(#wm)'/>
-      </svg>
-    </div>
     <!-- Animated background -->
     <div class="bg-animation">
         <div class="bg-orb bg-orb-1"></div>
@@ -145,10 +133,11 @@
                 return;
             }
 
-            const res = await fetch('/create-room', { method: 'POST' });
+            const BACKEND = 'https://dege-video-chat.onrender.com';
+            const res = await fetch(`${BACKEND}/create-room`, { method: 'POST' });
             const data = await res.json();
 
-            window.location.href = `/room/${data.room_id}?user=${encodeURIComponent(username)}`;
+            window.location.href = `${BACKEND}/room/${data.room_id}?user=${encodeURIComponent(username)}`;
         }
 
         function joinRoom() {

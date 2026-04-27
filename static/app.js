@@ -92,9 +92,11 @@ async function startChat() {
 }
 
 // --- WebSocket ---
+const BACKEND_URL = 'https://dege-video-chat.onrender.com';
+const WS_URL = 'wss://dege-video-chat.onrender.com';
+
 function connectWebSocket() {
-    const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-    ws = new WebSocket(`${protocol}://${location.host}/ws/${roomId}/${username}`);
+    ws = new WebSocket(`${WS_URL}/ws/${roomId}/${username}`);
 
     ws.onopen = () => {
         console.log('WebSocket connected');
